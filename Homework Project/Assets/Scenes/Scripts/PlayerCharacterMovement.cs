@@ -16,12 +16,12 @@ public class PlayerCharacterMovement : MonoBehaviour
 
     public float rotationSpeed = 30f;
 
+    public float maxHeight = 15f;
 
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Proceed with steering protocol");
-
+        
         currentSpeed = baseSpeed;
 
     }
@@ -32,29 +32,33 @@ public class PlayerCharacterMovement : MonoBehaviour
        //horizontal movement
         float moveStep = currentSpeed * Time.deltaTime;
 
+        Vector3 movementDirection = Vector3.zero;
+       
         bool is_up_pressed = Input.GetKey(KeyCode.UpArrow);
         if (is_up_pressed) 
         {
-            transform.position = transform.position + Vector3.forward * moveStep;
+           movementDirection += transform.forward;
         }
 
         bool is_right_pressed = Input.GetKey(KeyCode.RightArrow);
         if (is_right_pressed)
         {
-            transform.position = transform.position + Vector3.right * moveStep;
+            movementDirection += transform.right;
         }
 
         bool is_left_pressed = Input.GetKey(KeyCode.LeftArrow);
         if (is_left_pressed)
         {
-            transform.position = transform.position + Vector3.left * moveStep;
+            movementDirection += transform.right * -1;
         }
 
         bool is_down_pressed = Input.GetKey(KeyCode.DownArrow);
         if (is_down_pressed)
         {
-            transform.position = transform.position + Vector3.back * moveStep;
+            movementDirection += transform.forward * -1;
         }
+
+        transform.position = transform.position + movementDirection.normalized * moveStep;
 
         bool is_shift_pressed = Input.GetKey(KeyCode.LeftShift);
         if (is_shift_pressed)
@@ -91,8 +95,11 @@ public class PlayerCharacterMovement : MonoBehaviour
         if (is_hover_pressed) 
         {
             Rigidbody myRigidbody = GetComponent<Rigidbody>();
-            myRigidbody.AddForce(new Vector3(0, 4, 0), ForceMode.Force);
+            myRigidbody.AddForce(new Vector3(0, 5, 0), ForceMode.Force);
         }
 
+        float adjustedHeight = Mathf.Clamp(transform.position.y, 0f, maxHeight);
+        transform.position = new Vector3(transform.position.x, adjustedHeight, transform.position.z);
+        
     }
 }
